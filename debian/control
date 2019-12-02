@@ -3,9 +3,8 @@ Priority: optional
 Section: net
 Maintainer: José Miguel Sánchez Alés <josem@iescdl.es>
 Architecture: all
-Version: 0.2.5-1
+Version: 0.2.6-0
 Depends: dnsmasq (>= 2.48) | isc-dhcp-server, atftpd | tftpd-hpa | tftpd | dnsmasq, syslinux-common, pxelinux, syslinux-efi, nginx-light | httpd, php-fpm | libapache2-mod-php, python3 (>= 3.3) | python-ipaddress, openssh-server, sudo, udpcast, nfs-kernel-server, bc
-Suggests: syslinux-efi
 Description: Servidor de arranques por red.
  Sirve sistemas operativos por red a los clientes, permitiendo personalizar
  el menú de arranque según cuál sea el cliente y su localización. Ofrece,

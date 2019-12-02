@@ -704,26 +704,36 @@ configure_pxe_dnsmasq() {
    local type="$1"
    exec 3>&1 1>"$root$confdir/configs/dnsmasq/pxe.conf"
 
-   case $type in
-      0)  # No hay servicio PXE propiamente: se usan las opciones del DHCP
-         echo "# /etc/dnsmasq.d/pxe.conf
-dhcp-match=x86,93,0
+   echo "# /etc/dnsmasq.d/pxe.conf
+
+dhcp-match=bios,93,0
 dhcp-match=efi32,93,6
 dhcp-match=efi64,93,7
 dhcp-match=efi64,93,9i
 
-dhcp-boot=tag:x86,bios/lpxelinux.0
+# La configuración de syslinux se obtiene por HTTP
+dhcp-option=tag:bios,encap:43,vendor:PXEClient,210,http://$httpname/boot/bios/
+dhcp-option=tag:efi32,encap:43,vendor:PXEClient,210,http://$httpname/boot/efi32/
+dhcp-option=tag:efi64,encap:43,vendor:PXEClient,210,http://$httpname/boot/efi64/"
+   case $type in
+      0)  # No hay servicio PXE propiamente: se usan las opciones del DHCP
+         echo "
+dhcp-boot=tag:bios,bios/lpxelinux.0
 dhcp-boot=tag:efi32,efi32/syslinux.efi
-dhcp-boot=tag:efi64,efi64/syslinux.efi
-
-dhcp-option-force=x86,210,http://$httpname/boot/bios/
-dhcp-option-force=efi32,210,http://$httpname/boot/efi32/
-dhcp-option-force=efi64,210,http://$httpname/boot/efi64/";;
+dhcp-boot=tag:efi64,efi64/syslinux.efi";;
       1|2)  # Servicio PXE
-         echo "# /etc/dnsmasq.d/pxe.conf
+         echo "
 pxe-service=x86PC,"Servicio de clonaciones",bios/lpxelinux.0
+
+# En UEFI, forzamos a syslinux a enviar el menú PXE y,
+# solidariamente, la opción 43. Ver notas a la ver. 2.76 en:
+# http://www.thekelleys.org.uk/dnsmasq/CHANGELOG
+pxe-prompt="Leyenda invisible",0
+pxe-service=IA32_EFI,"Servicio de clonaciones",efi32/syslinux.efi
 pxe-service=IA32_EFI,"Servicio de clonaciones",efi32/syslinux.efi
 pxe-service=BC_EFI,"Servicio de clonaciones",efi64/syslinux.efi
+pxe-service=BC_EFI,"Servicio de clonaciones",efi64/syslinux.efi
+pxe-service=x86-64_EFI,"Servicio de clonaciones",efi64/syslinux.efi
 pxe-service=x86-64_EFI,"Servicio de clonaciones",efi64/syslinux.efi";;
    esac
    exec 1>&3 3>&-

@@ -1,6 +1,6 @@
 TEMPFILE := $(shell mktemp -d)
 BASEDIR   = $(TEMPFILE)/var/lib/clonaton
-VERSION   = 0.2.5-1
+VERSION   = 0.2.6-0
 
 current_dir := $(shell pwd)
 
