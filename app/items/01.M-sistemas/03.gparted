@@ -1,0 +1,11 @@
+#kernel={{ssoo}}/gparted/vmlinuz
+#initrd={{ssoo}}/gparted/initrd.img
+#fs={{ssoo}}/gparted/filesystem.squashfs
+MENU LABEL ^gParted
+KERNEL {{kernel}}
+INITRD {{initrd}}
+APPEND boot=live config union=overlay username=user noswap noprompt nomodeset components net.ifnames=0 keyboard-layouts=es locales=es_ES.UTF-8 vga=788 nosplash fetch=http://pxeserver/boot/bios/{{fs}}
+TEXT HELP
+<		Distribución de linux orientada a la creación
+<		y manipulación de particiones de discos.
+ENDTEXT

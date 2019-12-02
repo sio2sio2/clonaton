@@ -1,0 +1,10 @@
+#initrd={{ssoo}}/slitaz/rootfs.gz 
+#initrdl={{ssoo}}/slitaz/rootfs-local.gz 
+#kernel={{ssoo}}/slitaz/bzImage
+MENU LABEL SliTaZ
+MENU HIDE
+KERNEL {{kernel}}
+APPEND initrd={{initrd}},{{initrdl}} lang=es_ES kmap=es rw root=/dev/null vga=normal sound=no
+TEXT HELP
+Distribución mínima de linux (~8MB)
+ENDTEXT

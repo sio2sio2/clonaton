@@ -1,0 +1,5 @@
+MENU LABEL Re^cargar el menú
+CONFIG {{site_url}}?shiftkey=0
+TEXT HELP
+<		Recarga el presente menú
+ENDTEXT

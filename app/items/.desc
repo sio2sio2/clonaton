@@ -1,0 +1,5 @@
+Arranques disponibles en {{room}}
+# Lista de ficheros que contienen configuraciones.
+# aplicables a este menú.
+ini.cfg
+style.cfg

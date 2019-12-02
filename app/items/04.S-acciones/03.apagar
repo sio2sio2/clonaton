@@ -1,0 +1,5 @@
+MENU LABEL A^pagar
+KERNEL poweroff.c32
+TEXT HELP
+<		Apaga el equipo
+ENDTEXT

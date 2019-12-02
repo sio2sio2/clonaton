@@ -1,0 +1,6 @@
+MENU LABEL Arranque ^local
+LOCALBOOT {{localboot}}
+TEXT HELP
+<		Continúa la secuencia de arranque
+<		definida en la BIOS
+ENDTEXT

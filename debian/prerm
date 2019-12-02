@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Si actualizamos, deben mantenerse todos los ficheros.
+[ "$1" = "upgrade" ] && exit 0
+
+/var/lib/clonaton/scripts/uninstall.sh

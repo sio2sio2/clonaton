@@ -1,0 +1,6 @@
+MENU LABEL ^Reiniciar
+KERNEL reboot.c32
+APPEND -w
+TEXT HELP
+<		Reinicia el equipo
+ENDTEXT

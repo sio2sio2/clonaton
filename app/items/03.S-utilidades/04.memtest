@@ -1,0 +1,6 @@
+#memtest={{ssoo}}/memtest.bin
+MENU LABEL ^Memtest
+LINUX {{memtest}}
+TEXT HELP
+<		Comprobación de los módulos de memoria
+ENDTEXT

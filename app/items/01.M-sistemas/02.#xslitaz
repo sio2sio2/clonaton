@@ -1,0 +1,10 @@
+#initrd={{ssoo}}/slitaz/rootfs-core.gz 
+#kernel={{ssoo}}/slitaz/bzImage
+MENU LABEL ^SliTaZ
+KERNEL {{kernel}}
+INITRD {{initrd}} 
+APPEND lang=es_ES kmap=es rw root=/dev/null vga=normal autologin tz=Europe/Madrid
+TEXT HELP
+<		Nanodistribución de linux con entorno gráfico
+<		de apenas 48MB de peso.
+ENDTEXT

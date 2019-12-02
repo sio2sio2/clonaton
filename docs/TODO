@@ -1,0 +1,85 @@
+* ¿Por qué no pregunta el tipo de servidor al actualizar el paquete?
+* La configuración de clonezilla se pierde al hacer "remove".
+* Aadir a la configuración de cada entrada la posibilidad de incluir
+  la línea:
+
+   #arch:bios
+
+  para indicar la arquitectura (o arquitecturas) para las que es válida
+  la entrada. Si no lo es, debería deshabilitarse.
+
+VERANO:
+
+a) PHP:
+
+   - Rehacer la programación para que SimpleEntryCfg haga la labor que hace ahora
+     FileCfg, pero procese una cadena, no un fichero. FileCfg, por su parte será
+     una clase derivada de SimpleEntryCfg, que toma ficheros.
+
+     Luego, modificar el módulo de clonezilla para que EntryCfg derive de
+     SimpleEntryCfg y genere cadenas que puedan procesarse con los método de esta
+     última función.
+
+   - Hacer que las entradas del menú puedan contener visibilidades.
+
+   - Poder borrar imágenes a medio hacer: las que tienen .desc.json.tmp y no tiene
+     fichero .lock (véase más abajo b).
+
+   - Añadir una entrada para parar clonaciones multicast. Debería pedírse una clave
+     al lanzar la clonacion y que haya que meterla en el menú para confirmar la parada.
+     Debería, ademas, volver a preguntar si se quiere apagar el ordenador (delay se puede
+     pasar como variable de entorno).
+
+b) PARA EL PARCHEO DE drbl-ocs en verano:
+
+   - Más limpieza.
+   - Añadir broadcast.
+   - Crear un fichero multicast_iface_imagen.php.lock para advertir de que
+     el fichero se está clonando.
+   - Cada fichero se entrega con un udp-sender distinto, por lo que después
+     del primer udp-sender se podría crear multicast_iface_image.php.lock para
+     que "Restaurar multicast" no aparezca a otros clientes que no se hayan
+     incorporado a la clonación. La desventaja es que durante el envío del
+     primer fichero, la leyenda aparecerá.
+
+     Una mejor solución es la siguiente (parece funcionar)
+
+        pipe="-pipe 'miprograma.sh multicast_${iface}_$image.lock'"
+        for .....; do
+           ...
+           eval udp-sender $pipe '....'
+           pipe=""
+        done
+
+        Y miprograma.sh:
+
+
+         #!/bin/sh
+
+         touch $1
+         cat
+
+   - Generar el directorio anterior a partir de la ISO de clonezilla.
+
+   - ocsmgrd lo único que hace es recibir los avisos de que los clientes acaban.
+     Ahora mismo está inoperativo. Podría sustituirse por lo siguiente:
+
+      + Un servidor que:
+         - Recibe aviso cuando un cliente se añade a la clonación (habría que
+           mandar el aviso a través de prerun=).
+         - Recibe aviso cuando el cliente acaba (esto ya se hace).
+         - Recibe las órdenes de apagado, que sólo se procesan si no hay clientes
+           pendientes.
+
+c) Scripts:
+  - Hay que reiniciar servidores en postrm.
+
+  - Añadir la posibilidad de apagar el servidor cuando se restauran imágenes por
+    unicast, quizás auditando el fichero /var/lib/nfs/rmtab y usando incron.
+
+  - Aspecto del menú de syslinux (vesamenu).
+
+  - Aspecto de los cuadros de diálogo de launch.sh (colores de dialog):
+	   https://bash.cyberciti.biz/guide/Dialog_customization_with_configuration_file
+	
+      La variable de ambiente DIALOGRC determina qué fichero de configuración se usa.

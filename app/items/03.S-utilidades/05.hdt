@@ -1,0 +1,10 @@
+#pciids={{ssoo}}/hdt/pci.ids
+#modules={{ssoo}}/hdt/modules.ali 
+MENU LABEL ^Hardware detection tool (HDT)
+MENU INDENT 1
+KERNEL hdt.c32
+APPEND modules_alias={{modules}} pciids={{pciids}}
+TEXT HELP
+<		Herramienta de detección de los componentes
+<		físicos de este equipo.
+ENDTEXT

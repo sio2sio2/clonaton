@@ -1,0 +1,8 @@
+#!/bin/sh
+
+[ "$1" = "purge" ] && rm -rf /etc/clonaton
+
+# TODO: Hay que reiniciar todos los servicios
+# lo que requiere averiguar cuáles hay instalados.
+invoke-rc.d nfs-kernel-server restart
+exit 0

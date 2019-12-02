@@ -1,0 +1,74 @@
+#!/bin/sh
+
+set -e
+
+BASEDIR=/var/lib/clonaton
+CONFFILE=/etc/clonaton/clonaton.conf
+
+parse_conf() {
+   local IFS text pre="$1"
+   texto=`sed -r '/^[_[:alnum:]]+\s*=/!d; y:'"'"':":; s:^(\S+)\s*=\s*(.*)$:'"${pre:+${pre}_}\1='\2':" "$CONFFILE"` || return 1
+   eval $texto
+}
+
+# Instalamos (menú de texto)
+"$BASEDIR/scripts/install.sh" -T
+
+parse_conf
+
+. "$appdir/modules/clonezilla/scripts/lib/dialog.sh"
+
+confdir="`dirname "$CONFFILE"`/configs"
+
+dialog --defaultno --yesno "Puedo intentar configurar por usted los servicios asociados a la aplicación (DHCP, NFS, etc), pero tal acción puede romper la configuración que tenga usted ya hecha. Le recomiendo que sólo responda afirmativamente, si no los configuró con anterioridad. Si responde no, puede consultar $confdir y realizar la tarea a mano." 12 65 || return 0
+
+
+# NFS
+sed -ri '/^# clonaton$/{N;d}' /etc/exports
+{ echo "# clonaton"; cat "$confdir/exports"; } >> /etc/exports
+invoke-rc.d nfs-kernel-server restart
+
+
+# nginx
+if which nginx > /dev/null; then
+   ln -sf "$confdir/site-pxe" /etc/nginx/sites-available/pxe
+   ln -sf ../sites-available/pxe /etc/nginx/sites-enabled
+   invoke-rc.d nginx restart
+else
+   dialog --msgbox "Dado que no usa nginx, deberá usted preocuparse de la configuración del servidor web. Eche un vistazo a $confdir/site-pxe para saber cómo hacerlo" 8 55
+fi
+
+
+# DHCP
+if [ -d "$confdir/dnsmasq" ]; then
+   for file in "$confdir/dnsmasq"/*; do
+      ln -sf "$file" /etc/dnsmasq.d
+   done
+   invoke-rc.d dnsmasq restart
+fi
+
+if [ -d "$confdir/isc" ]; then
+   for file in "$confdir/dnsmasq"/*; do
+      ln -sf "$file" /etc/dhcp
+   done
+   invoke-rc.d isc-dhcp-server restart
+fi
+
+if [ -f "$confdir/udhcpd.conf" ]; then
+   ln -sf "$confdir/udhcpd.conf" /etc/udhcpd.conf
+   invoke-rc.d udhcpd restart
+fi
+
+
+# SUDO
+ln -sf "$confdir/sudo.clonaton" /etc/sudoers.d/clonaton
+
+
+if [ "$tftp" != "dnsmasq" ]; then
+   edialog --msgbox "Este configurador aún no soporta '$tftp'. Configúrelo por su cuenta para que comparta $tftpdir" 8 55
+fi
+
+if [ "$dhcp_type" != "0" ] || [ "$dhcp" != "dnsmasq" ]; then
+   echo "$httpname" | grep -Evq '^[0-9.]+$' && dialog --msgbox "Recuerde que, pues usa el nombre '$httpname' para referirse al servidor, debe asegurarse de que el servidor DNS de la red sea capaz de hacer la resolución de tal nombre." 10 60
+fi
+return 0

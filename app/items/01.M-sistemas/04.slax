@@ -1,0 +1,12 @@
+#kernel={{ssoo}}/slax/vmlinuz
+#initrd={{ssoo}}/slax/initrfs.img
+#iso={{ssoo}}/slax/slax.iso
+MENU LABEL Sla^X
+MENU HIDE   # No funciona :(
+KERNEL {{kernel}}
+INITRD {{initrd}}
+APPEND vga=normal load_ramdisk=1 prompt_ramdisk=0 rw printk.time=0 from=http://pxeserver/boot/bios/{{iso}}
+TEXT HELP
+<		Distribución ligera de linux basada en debian.
+<		(sin soporte para lengua no inglesa por ahora)
+ENDTEXT
